@@ -1,40 +1,32 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 export const useHttp = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-  const request = useCallback(
-    async (
-      url,
-      method = 'GET',
-      body = null,
-      headers = { 'Content-type': 'application/json' },
-    ) => {
-      setLoading(true);
+    const request = useCallback(async (url, method = 'GET', body = null, headers = {'Content-Type': 'application/json'}) => {
 
-      
-      try {
-        const response = await fetch(url, { method, body, headers });
-        console.log('what is in response: ', response);
-        if (!response.ok) {
-          throw new Error(`Could not fetch ${url}, status: ${response.status}`);
+        setLoading(true);
+
+        try {
+            const response = await fetch(url, {method, body, headers});
+
+            if (!response.ok) {
+                throw new Error(`Could not fetch ${url}, status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            setLoading(false);
+            return data;
+        } catch(e) {
+            setLoading(false);
+            setError(e.message);
+            throw e;
         }
+    }, []);
 
-        const data = response.json();
-        console.log('what is in data: ', data);
-        setLoading(false);
-        return data;
-      } catch (e) {
-        setLoading(false);
-        setError(e.message);
-        throw e;
-      }
-    },
-    [],
-  );
+    const clearError = useCallback(() => setError(null), []);
 
-  const clearError = useCallback(() => setError(null), []);
-
-  return { loading, error, request, clearError };
-};
+    return {loading, request, error, clearError}
+}
