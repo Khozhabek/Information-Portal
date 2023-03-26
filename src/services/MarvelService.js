@@ -1,15 +1,20 @@
 import { useHttp } from '../hooks/http.hook';
 
 const useMarvelService = () => {
-  const { loading, error, request, clearError } = useHttp();
+  const { request, clearError, process, setProcess } = useHttp();
   const _apiBase = 'https://gateway.marvel.com:443/v1/public/';
   const _apiKey = 'apikey=290cae0220b9037999bb4a00af955825';
-  const _baseOffset = 1343;
+  const _baseOffset = 1111;
 
   const getAllCharacters = async (offset = _baseOffset) => {
     const res = await request(
       `${_apiBase}characters?limit=9&offset=${offset}&${_apiKey}`,
     );
+    return res.data.results.map(_transformCharacter);
+  };
+
+  const getCharacterByName = async (name) => {
+    const res = await request(`${_apiBase}characters?name=${name}&${_apiKey}`);
     return res.data.results.map(_transformCharacter);
   };
 
@@ -35,7 +40,7 @@ const useMarvelService = () => {
       id: char.id,
       name: char.name,
       description: char.description
-        ? `${char.description.slice(0, 210)}...`
+        ? `${char.description.slice(0, 310)}...`
         : 'There is no description for this character',
       thumbnail: char.thumbnail.path + '.' + char.thumbnail.extension,
       homepage: char.urls[0].url,
@@ -61,11 +66,12 @@ const useMarvelService = () => {
   };
 
   return {
-    getAllCharacters,
-    getCharacter,
-    loading,
-    error,
     clearError,
+    process,
+    setProcess,
+    getAllCharacters,
+    getCharacterByName,
+    getCharacter,
     getAllComics,
     getComic,
   };

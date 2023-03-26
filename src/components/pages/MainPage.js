@@ -1,35 +1,49 @@
-import { useState } from 'react';
+import { useState } from "react";
+import { Helmet } from "react-helmet";
 
-import CharInfo from '../charInfo/CharInfo';
-import CharList from '../charList/CharList';
-import RandomChar from '../randomChar/RandomChar';
-import ErrorBoundary from '../errorBoundary/ErrorBoundary';
+import RandomChar from "../randomChar/RandomChar";
+import CharList from "../charList/CharList";
+import CharInfo from "../charInfo/CharInfo";
+import CharSearchForm from "../CharSearchForm/CharSearchFrom";
+import ErrorBoundary from "../errorBoundary/ErrorBoundary";
 
 import decoration from '../../assets/img/vision.png';
 
 const MainPage = () => {
-  const [selectedChar, setChar] = useState(null);
 
-  const onCharSelected = (id) => {
-    setChar(id);
-  };
+    const [selectedChar, setChar] = useState(null);
 
-  return (
-    <>
-      <ErrorBoundary>
-        <RandomChar />
-      </ErrorBoundary>
-      <div className="char__content">
-        <ErrorBoundary>
-          <CharList onCharSelected={onCharSelected} />
-        </ErrorBoundary>
-        <ErrorBoundary>
-          <CharInfo charId={selectedChar} />
-        </ErrorBoundary>
-      </div>
-      <img className="bg-decoration" src={decoration} alt="vision" />
-    </>
-  );
-};
+    const onCharSelected = (id) => {
+        setChar(id);
+    }
+    return (
+        <>
+            <Helmet>
+                <meta
+                    name="description"
+                    content="Marvel information portal"
+                    />
+                <title>Marvel information portal</title>
+            </Helmet>
+            <ErrorBoundary>
+                <RandomChar/>
+            </ErrorBoundary>
+            <div className="char__content">
+                <ErrorBoundary>
+                    <CharList onCharSelected={onCharSelected}/>
+                </ErrorBoundary>
+                <div>
+                    <ErrorBoundary>
+                        <CharInfo charId={selectedChar}/>
+                    </ErrorBoundary>
+                    <ErrorBoundary>
+                        <CharSearchForm/>
+                    </ErrorBoundary>
+                </div>
+            </div>
+            <img className="bg-decoration" src={decoration} alt="vision"/>
+        </>
+    )
+}
 
 export default MainPage;
